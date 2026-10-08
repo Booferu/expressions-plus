@@ -84,7 +84,7 @@ body.waifuMode .expression-plus-holder {
     filter: drop-shadow(2px 2px 2px var(--SmartThemeShadowColor));
     z-index: 2;
     overflow: hidden;
-    resize: both;
+    resize: none;
     display: flex;
     justify-content: center;
 }
@@ -1828,4 +1828,78 @@ img.expression-plus.default {
     padding: 2px 0;
     letter-spacing: 2px;
     font-weight: 600;
+}
+
+/* ==========================================================================
+   Custom sprite handles (added by sprite-handles.js)
+   ========================================================================== */
+
+.expression-plus-holder[data-sxp-managed="1"] > img.expression-plus {
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-width: none !important;
+    max-height: none !important;
+    object-fit: contain;
+}
+
+.sxp-handle {
+    position: absolute;
+    display: none;              /* toggled on hover by JS */
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    z-index: 30;
+    pointer-events: auto;
+    color: rgba(255, 255, 255, 0.95);
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.9));
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+}
+
+.sxp-handle-tl { top: 6px;    left: 6px;  cursor: grab; }
+.sxp-handle-tr { top: 6px;    right: 6px; cursor: grab; }
+.sxp-handle-bl { bottom: 6px; left: 6px;  cursor: nesw-resize; }
+.sxp-handle-br { bottom: 6px; right: 6px; cursor: nwse-resize; }
+
+.sxp-handle-drag::before {
+    content: "";
+    width: 16px;
+    height: 2px;
+    background: currentColor;
+    border-radius: 1px;
+    box-shadow: 0 -5px 0 currentColor, 0 5px 0 currentColor;
+}
+
+.sxp-handle-resize::after {
+    content: "";
+    position: absolute;
+    width: 11px;
+    height: 11px;
+}
+
+.sxp-handle-br::after {
+    bottom: 9px; right: 9px;
+    border-right: 3px solid currentColor;
+    border-bottom: 3px solid currentColor;
+}
+
+.sxp-handle-bl::after {
+    bottom: 9px; left: 9px;
+    border-left: 3px solid currentColor;
+    border-bottom: 3px solid currentColor;
+}
+
+body.sxp-cursor-grab,     body.sxp-cursor-grab *     { cursor: grab       !important; }
+body.sxp-cursor-grabbing, body.sxp-cursor-grabbing * { cursor: grabbing   !important; }
+body.sxp-cursor-nwse,     body.sxp-cursor-nwse *     { cursor: nwse-resize !important; }
+body.sxp-cursor-nesw,     body.sxp-cursor-nesw *     { cursor: nesw-resize !important; }
+
+/* Hide the legacy drag-grabber icon once our handles own the holder */
+.expression-plus-holder[data-sxp-managed="1"] > .drag-grabber,
+.expression-plus-holder[data-sxp-managed="1"] > #expression-plus-holderheader {
+    display: none !important;
 }

@@ -211,24 +211,34 @@ export function chooseSpriteForExpression(spriteFolderName, expression, { prevEx
  */
 export function getSpriteFolderName(characterMessage = null, characterName = null) {
     const context = getContext();
-    let spriteFolderName = characterName ?? context.name2;
     const message = characterMessage ?? getLastCharacterMessage();
     const avatarFileName = getFolderNameByMessage(message);
-    
+    const baseName = characterName ?? context.name2;
+
+    // Expressions+ assignment takes precedence over SillyTavern's built-in
+    // expression folder override. If the user has an assignment for this
+    // character (even empty string = base folder), use it exclusively.
+    const settings = getSettings();
+    const assignment = settings.characterAssignments?.find(a => a.characterId === avatarFileName);
+
+    if (assignment) {
+        const expressionSet = assignment.expressionSet;
+        if (expressionSet &&
+            expressionSet !== DEFAULT_EXPRESSION_SET &&
+            expressionSet !== DEFAULT_PLUS_EXPRESSION_SET) {
+            return `${baseName}/${expressionSet}`;
+        }
+        return baseName;
+    }
+
+    // No Expressions+ assignment: fall back to SillyTavern's built-in override
+    // so characters we don't manage still work with the built-in system.
     const expressionOverride = extension_settings.expressionOverrides?.find(e => e.name == avatarFileName);
     if (expressionOverride && expressionOverride.path) {
-        spriteFolderName = expressionOverride.path;
+        return expressionOverride.path;
     }
 
-    // Apply expression set if configured
-    // Note: DEFAULT_PLUS_EXPRESSION_SET is a pseudo-set that uses the base folder
-    // with built-in Default+ smileys as fallbacks, not a real subfolder
-    const expressionSet = getCharacterExpressionSetFromSettings(avatarFileName);
-    if (expressionSet && expressionSet !== DEFAULT_EXPRESSION_SET && expressionSet !== DEFAULT_PLUS_EXPRESSION_SET) {
-        spriteFolderName = `${spriteFolderName}/${expressionSet}`;
-    }
-
-    return spriteFolderName;
+    return baseName;
 }
 
 /**

@@ -247,6 +247,19 @@ export function registerSlashCommands() {
                     return currentSet;
                 }
                 case 'set': {
+                    // Reserved token for "reset to base folder (default outfit)"
+                    if (value === '__default__') {
+                        setCharacterExpressionSet(characterId, '');
+                        clearSpriteCache();
+                        saveSettingsDebounced();
+                        if (renderCharacterAssignments) {
+                            renderCharacterAssignments();
+                        }
+                        dispatchExpressionSetChanged(characterId, '');
+                        toast.success('Expression set reset to default (base folder)');
+                        return '';
+                    }
+
                     if (!value) {
                         toast.error('No expression set name provided');
                         return '';

@@ -94,6 +94,10 @@ export async function setImage(img, path) {
             const imgWidth = img.width();
             const imgHeight = img.height();
             const expressionHolder = img.parent();
+            const prevMinW = expressionHolder[0]?.style.minWidth  ?? '';
+            const prevMinH = expressionHolder[0]?.style.minHeight ?? '';
+            const prevW    = expressionHolder[0]?.style.width     ?? '';
+            const prevH    = expressionHolder[0]?.style.height    ?? '';
             expressionHolder.css('min-width', imgWidth > 100 ? imgWidth : 100);
             expressionHolder.css('min-height', imgHeight > 100 ? imgHeight : 100);
 
@@ -106,17 +110,21 @@ export async function setImage(img, path) {
                     img.remove();
                     expressionClone.data('filename', originalId);
                     expressionClone.removeClass('expression-plus-animating');
-                    expressionHolder.css('min-width', 100);
-                    expressionHolder.css('min-height', 100);
-                    expressionHolder.css({ height: '', width: '' });
+                    expressionHolder.css({
+                        minWidth:  prevMinW,
+                        minHeight: prevMinH,
+                        width:     prevW,
+                        height:    prevH,
+                    });
 
-                    // Re-apply per-character saved layout for single-sprite holder only
                     if (expressionHolder.attr('id') === 'expression-plus-holder') {
                         restoreCharacterLayout(currentCharacterAvatar);
                     }
 
-                    // Reinitialize drag to reset stale dimension closures
-                    if (expressionHolder.attr('id')) {
+                    // Skip dragElement for the single-sprite holder —
+                    // sprite-handles.js manages it. VN/scenario holders still use it.
+                    if (expressionHolder.attr('id') &&
+                        expressionHolder.attr('id') !== 'expression-plus-holder') {
                         dragElement(expressionHolder);
                     }
 
@@ -532,6 +540,10 @@ export async function setExpression(spriteFolderName, expression, { force = fals
             const imgWidth = img.width();
             const imgHeight = img.height();
             const expressionHolder = img.parent();
+            const prevMinW = expressionHolder[0]?.style.minWidth  ?? '';
+            const prevMinH = expressionHolder[0]?.style.minHeight ?? '';
+            const prevW    = expressionHolder[0]?.style.width     ?? '';
+            const prevH    = expressionHolder[0]?.style.height    ?? '';
             expressionHolder.css('min-width', imgWidth > 100 ? imgWidth : 100);
             expressionHolder.css('min-height', imgHeight > 100 ? imgHeight : 100);
 
@@ -544,15 +556,17 @@ export async function setExpression(spriteFolderName, expression, { force = fals
                     img.remove();
                     expressionClone.attr('id', 'expression-plus-image');
                     expressionClone.removeClass('expression-plus-animating');
-                    expressionHolder.css('min-width', 100);
-                    expressionHolder.css('min-height', 100);
-                    expressionHolder.css({ height: '', width: '' });
+                    expressionHolder.css({
+                        minWidth:  prevMinW,
+                        minHeight: prevMinH,
+                        width:     prevW,
+                        height:    prevH,
+                    });
 
-                    // Re-apply per-character saved layout if available
                     restoreCharacterLayout(currentCharacterAvatar);
 
-                    // Reinitialize drag to reset stale dimension closures
-                    if (expressionHolder.attr('id')) {
+                    if (expressionHolder.attr('id') &&
+                        expressionHolder.attr('id') !== 'expression-plus-holder') {
                         dragElement(expressionHolder);
                     }
                 });

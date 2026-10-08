@@ -1,5 +1,6 @@
 import { eventSource, event_types, saveSettingsDebounced } from '../../../../script.js';
 import { dragElement, isMobile } from '../../../RossAscends-mods.js';
+import { initSpriteHandles } from './src/sprite-handles.js';
 import { ModuleWorkerWrapper, renderExtensionTemplateAsync, getContext } from '../../../extensions.js';
 import { power_user } from '../../../power-user.js';
 
@@ -551,7 +552,7 @@ function addVisualNovelMode() {
     setInterval(updateFunction, UPDATE_INTERVAL);
     moduleWorker();
     
-    dragElement($('#expression-plus-holder'));
+    initSpriteHandles();
 
     // Clear stale bottom/right that dragElement may set during initialization
     // These cause panels to get pinned with fixed lower bounds on reload
@@ -598,9 +599,8 @@ function addVisualNovelMode() {
         setCurrentCharacterAvatar(newAvatarKey);
         restoreCharacterLayout(newAvatarKey);
 
-        // Re-initialize dragElement to reset its closured height/width variables.
-        // Without this, elementDrag() applies the previous character's dimensions on first drag.
-        dragElement($('#expression-plus-holder'));
+        // sprite-handles.js owns positioning for the single-sprite holder.
+        // No dragElement re-init needed.
 
         renderCharacterAssignments();
 

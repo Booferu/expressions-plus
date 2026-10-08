@@ -63,6 +63,9 @@ export function restoreCharacterLayout(avatarFilename) {
     const holder = document.getElementById(SINGLE_HOLDER_ID);
     if (!holder) return;
 
+    // sprite-handles.js owns the layout when it's active — don't clobber it.
+    if (holder.dataset.sxpManaged === '1') return;
+
     const settings = getSettings();
     const saved = avatarFilename && settings.characterLayouts?.[avatarFilename];
 
